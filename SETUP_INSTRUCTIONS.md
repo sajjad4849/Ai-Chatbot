@@ -44,17 +44,23 @@ npx react-native run-android
    - Views: `Home.js`, `UserWidget.js`
    - Services: `ApiService.js`, `DatabaseService.js`, `WidgetDataService.js`
 
-2. **API Integration**
+2. **Professional Splash Screen**
+   - Advanced splash with real initialization progress
+   - Animated logo and progress bar
+   - Shows actual app setup steps
+   - Smooth transitions to main app
+
+3. **API Integration**
    - Fetches users from https://reqres.in/api/users
    - Handles pagination automatically
    - Error handling and retry logic
 
-3. **Local Database (SQLite)**
+4. **Local Database (SQLite)**
    - Stores user data locally
    - Provides offline access
    - Random user selection for widget
 
-4. **Widget Implementation**
+5. **Widget Implementation**
    - Displays random user with avatar and name
    - Refresh functionality
    - Proper error handling
@@ -119,7 +125,9 @@ src/
 ├── models/
 │   └── User.js              # User data model
 ├── screens/
-│   └── Home.js              # Main screen
+│   ├── Home.js              # Main screen
+│   ├── SplashScreen.js      # Simple splash screen
+│   └── AdvancedSplashScreen.js # Advanced splash with progress
 ├── services/
 │   ├── ApiService.js        # API communication
 │   ├── DatabaseService.js   # SQLite operations
