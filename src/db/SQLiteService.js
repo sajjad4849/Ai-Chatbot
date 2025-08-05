@@ -1,4 +1,5 @@
 import SQLite from 'react-native-sqlite-storage';
+import ApiService from '../services/ApiService';
 
 // Enable debugging
 SQLite.DEBUG(true);
@@ -10,60 +11,6 @@ const database_displayname = 'User Database';
 const database_size = 200000;
 
 let db;
-
-// Sample users with avatars from various sources
-const sampleUsers = [
-  {
-    id: 1,
-    name: 'Alice Johnson',
-    avatar: 'https://randomuser.me/api/portraits/women/1.jpg'
-  },
-  {
-    id: 2,
-    name: 'Bob Smith',
-    avatar: 'https://randomuser.me/api/portraits/men/2.jpg'
-  },
-  {
-    id: 3,
-    name: 'Carol Davis',
-    avatar: 'https://randomuser.me/api/portraits/women/3.jpg'
-  },
-  {
-    id: 4,
-    name: 'David Wilson',
-    avatar: 'https://randomuser.me/api/portraits/men/4.jpg'
-  },
-  {
-    id: 5,
-    name: 'Emma Brown',
-    avatar: 'https://randomuser.me/api/portraits/women/5.jpg'
-  },
-  {
-    id: 6,
-    name: 'Frank Miller',
-    avatar: 'https://randomuser.me/api/portraits/men/6.jpg'
-  },
-  {
-    id: 7,
-    name: 'Grace Lee',
-    avatar: 'https://randomuser.me/api/portraits/women/7.jpg'
-  },
-  {
-    id: 8,
-    name: 'Henry Taylor',
-    avatar: 'https://randomuser.me/api/portraits/men/8.jpg'
-  },
-  {
-    id: 9,
-    name: 'Ivy Chen',
-    avatar: 'https://randomuser.me/api/portraits/women/9.jpg'
-  },
-  {
-    id: 10,
-    name: 'Jack Anderson',
-    avatar: 'https://randomuser.me/api/portraits/men/10.jpg'
-  }
-];
 
 export const initDatabase = () => {
   return new Promise((resolve, reject) => {
@@ -80,15 +27,7 @@ export const initDatabase = () => {
         createTables()
           .then(() => {
             console.log('✅ Tables created successfully');
-            insertSampleData()
-              .then(() => {
-                console.log('✅ Sample data inserted successfully');
-                resolve(db);
-              })
-              .catch(error => {
-                console.error('❌ Error inserting sample data:', error);
-                reject(error);
-              });
+            resolve(db);
           })
           .catch(error => {
             console.error('❌ Error creating tables:', error);
@@ -107,9 +46,14 @@ const createTables = () => {
     db.transaction(tx => {
       tx.executeSql(
         `CREATE TABLE IF NOT EXISTS users (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          id INTEGER PRIMARY KEY,
           name TEXT NOT NULL,
-          avatar TEXT
+          avatar TEXT,
+          email TEXT,
+          first_name TEXT,
+          last_name TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`,
         [],
         () => {
@@ -125,47 +69,72 @@ const createTables = () => {
   });
 };
 
-const insertSampleData = () => {
+// Insert or update users from API
+export const insertUsers = (users) => {
   return new Promise((resolve, reject) => {
-    // First, check if data already exists
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT COUNT(*) as count FROM users',
-        [],
-        (tx, results) => {
-          const count = results.rows.item(0).count;
-          if (count > 0) {
-            console.log('📊 Sample data already exists, skipping insertion');
-            resolve();
-            return;
-          }
+    if (!db) {
+      reject(new Error('Database not initialized'));
+      return;
+    }
 
-          // Insert sample data
-          console.log('📊 Inserting sample data...');
-          sampleUsers.forEach((user, index) => {
-            tx.executeSql(
-              'INSERT INTO users (name, avatar) VALUES (?, ?)',
-              [user.name, user.avatar],
-              () => {
-                if (index === sampleUsers.length - 1) {
-                  console.log('✅ All sample data inserted');
-                  resolve();
-                }
-              },
-              error => {
-                console.error('❌ Error inserting user:', error);
-                reject(error);
-              },
-            );
-          });
-        },
-        error => {
-          console.error('❌ Error checking existing data:', error);
-          reject(error);
-        },
-      );
+    console.log(`📊 Inserting/updating ${users.length} users...`);
+    
+    db.transaction(tx => {
+      let completed = 0;
+      let hasError = false;
+
+      users.forEach((user) => {
+        tx.executeSql(
+          `INSERT OR REPLACE INTO users 
+           (id, name, avatar, email, first_name, last_name, updated_at) 
+           VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+          [user.id, user.name, user.avatar, user.email, user.first_name, user.last_name],
+          () => {
+            completed++;
+            if (completed === users.length && !hasError) {
+              console.log(`✅ All ${users.length} users inserted/updated successfully`);
+              resolve();
+            }
+          },
+          error => {
+            hasError = true;
+            console.error('❌ Error inserting user:', error);
+            reject(error);
+          },
+        );
+      });
     });
   });
+};
+
+// Sync users from API to local database
+export const syncUsersFromAPI = async () => {
+  try {
+    console.log('🔄 Syncing users from API...');
+    
+    // Test API connection first
+    const isConnected = await ApiService.testConnection();
+    if (!isConnected) {
+      throw new Error('API is not accessible');
+    }
+
+    // Fetch all users from API
+    const apiUsers = await ApiService.fetchAllUsers();
+    
+    if (apiUsers.length === 0) {
+      console.log('⚠️ No users received from API');
+      return { success: false, message: 'No users found in API' };
+    }
+
+    // Insert users into local database
+    await insertUsers(apiUsers);
+    
+    console.log(`✅ Successfully synced ${apiUsers.length} users from API`);
+    return { success: true, count: apiUsers.length };
+  } catch (error) {
+    console.error('❌ Error syncing users from API:', error.message);
+    throw error;
+  }
 };
 
 export const getRandomUser = () => {
@@ -191,20 +160,12 @@ export const getRandomUser = () => {
             resolve(user);
           } else {
             console.log('⚠️ No users found in database');
-            // Fallback to sample data if database is empty
-            const randomIndex = Math.floor(Math.random() * sampleUsers.length);
-            const fallbackUser = sampleUsers[randomIndex];
-            console.log('🔄 Using fallback user:', fallbackUser);
-            resolve(fallbackUser);
+            reject(new Error('No users found in database. Please sync from API first.'));
           }
         },
         error => {
           console.error('❌ Error fetching random user:', error);
-          // Fallback to sample data on error
-          const randomIndex = Math.floor(Math.random() * sampleUsers.length);
-          const fallbackUser = sampleUsers[randomIndex];
-          console.log('🔄 Using fallback user due to error:', fallbackUser);
-          resolve(fallbackUser);
+          reject(error);
         },
       );
     });

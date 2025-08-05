@@ -1,4 +1,4 @@
-import { getRandomUser } from '../db/SQLiteService';
+import userViewModel from '../viewmodels/UserViewModel';
 import { updateWidget, configureWidget } from 'react-native-android-widget';
 import AppWidget from '../widgets/AppWidget';
 
@@ -45,8 +45,8 @@ export const pushWidgetData = async () => {
   try {
     console.log('🔄 Updating widget data...');
     
-    // Get random user from database
-    const user = await getRandomUser();
+    // Get random user from ViewModel
+    const user = await userViewModel.getRandomUserForWidget();
     
     if (!user) {
       console.warn('⚠️ No user data available for widget update');
@@ -61,7 +61,8 @@ export const pushWidgetData = async () => {
       renderWidget: () => (
         <AppWidget 
           name={user.name} 
-          avatar={user.avatar} 
+          avatar={user.avatar}
+          email={user.email}
         />
       ),
       widgetNotFound: () => {
@@ -73,14 +74,44 @@ export const pushWidgetData = async () => {
   } catch (error) {
     console.error('❌ Error updating widget:', error);
     
+    // Check if we need to sync data first
+    if (error.message.includes('No users found in database')) {
+      console.log('🔄 No users in database, attempting to sync from API...');
+      try {
+        await userViewModel.syncFromAPI();
+        // Retry after sync
+        const user = await userViewModel.getRandomUserForWidget();
+        if (user) {
+          await updateWidget({
+            widgetName: WIDGET_NAME,
+            renderWidget: () => (
+              <AppWidget 
+                name={user.name} 
+                avatar={user.avatar}
+                email={user.email}
+              />
+            ),
+            widgetNotFound: () => {
+              console.warn('⚠️ Widget not found on home screen');
+            },
+          });
+          console.log('✅ Widget updated after API sync with user:', user.name);
+          return;
+        }
+      } catch (syncError) {
+        console.error('❌ Failed to sync data for widget:', syncError);
+      }
+    }
+    
     // Fallback update with default data
     try {
       await updateWidget({
         widgetName: WIDGET_NAME,
         renderWidget: () => (
           <AppWidget 
-            name="Unknown User" 
-            avatar="" 
+            name="No Data Available" 
+            avatar=""
+            email="Please open app to sync"
           />
         ),
         widgetNotFound: () => {

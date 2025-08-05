@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlexWidget, TextWidget, ImageWidget } from 'react-native-android-widget';
 
-const AppWidget = ({ name, avatar }) => {
+const AppWidget = ({ name, avatar, email }) => {
   const hasAvatar = avatar && avatar.trim() !== '';
   
   return (
@@ -19,29 +19,29 @@ const AppWidget = ({ name, avatar }) => {
       {/* Avatar Section */}
       <FlexWidget
         style={{
-          width: 80,
-          height: 80,
-          borderRadius: 40,
+          width: 70,
+          height: 70,
+          borderRadius: 35,
           backgroundColor: hasAvatar ? 'transparent' : '#e0e0e0',
           justifyContent: 'center',
           alignItems: 'center',
-          marginBottom: 12,
+          marginBottom: 8,
         }}
       >
         {hasAvatar ? (
           <ImageWidget
             image={avatar}
             style={{
-              width: 80,
-              height: 80,
-              borderRadius: 40,
+              width: 70,
+              height: 70,
+              borderRadius: 35,
             }}
           />
         ) : (
           <TextWidget
             text={name?.[0]?.toUpperCase() || '?'}
             style={{
-              fontSize: 32,
+              fontSize: 28,
               color: '#666666',
               fontWeight: 'bold',
             }}
@@ -53,13 +53,27 @@ const AppWidget = ({ name, avatar }) => {
       <TextWidget
         text={name || 'Unknown User'}
         style={{
-          fontSize: 16,
+          fontSize: 14,
           color: '#333333',
           fontWeight: 'bold',
           textAlign: 'center',
-          maxLines: 2,
+          maxLines: 1,
+          marginBottom: 4,
         }}
       />
+
+      {/* Email Section */}
+      {email && (
+        <TextWidget
+          text={email}
+          style={{
+            fontSize: 11,
+            color: '#666666',
+            textAlign: 'center',
+            maxLines: 1,
+          }}
+        />
+      )}
     </FlexWidget>
   );
 };

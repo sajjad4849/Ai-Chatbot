@@ -1,17 +1,29 @@
-# Random User Widget - Task_7 Bitbucket
+# Task 7: Local DB, Web Services, MVVM & Widget
 
-A React Native Android application that displays random user avatars and names in both the app and as a home screen widget.
+A well-structured React Native app using **MVVM architecture**, **API handling**, and a **widget** to display stored data from reqres.in API.
 
 ## 🚀 Features
 
-- ✅ **Random User Display**: Shows random users with avatars and names
-- ✅ **SQLite Database**: Stores user data locally with fallback support
-- ✅ **Android Widget**: Home screen widget that updates every 30 seconds
+### 1️⃣ Main Screen (Home.js)
+- ✅ **API Integration**: Fetches data from https://reqres.in/api/users
+- ✅ **SQLite Database**: Stores user data locally (name, avatar, email)
+- ✅ **FlatList Display**: Shows users with avatar and name
+- ✅ **Progress Indicators**: Loading states for avatar images
+- ✅ **Pull to Refresh**: Sync latest data from API
+- ✅ **MVVM Architecture**: Clean separation of concerns
+
+### 2️⃣ Home Screen Widget
+- ✅ **Random User Display**: Shows one random user from local DB
+- ✅ **Auto-refresh**: Updates every 30 seconds
 - ✅ **Avatar Support**: Displays user avatars with fallback to initials
-- ✅ **Auto-refresh**: Automatic updates every 30 seconds
-- ✅ **Manual Refresh**: Tap to update widget manually
-- ✅ **Error Handling**: Robust error handling with fallbacks
-- ✅ **Responsive Design**: Works on different screen sizes
+- ✅ **Manual Refresh**: Tap widget to update immediately
+- ✅ **Error Handling**: Robust fallbacks and API sync
+
+### 🏗️ Architecture
+- ✅ **MVVM Pattern**: ViewModel manages business logic
+- ✅ **API Service**: Centralized API handling
+- ✅ **SQLite Service**: Database operations
+- ✅ **Widget Service**: Widget lifecycle management
 
 ## 📱 Screenshots
 

@@ -1,7 +1,7 @@
 {
   "name": "RandomUserWidget",
   "version": "1.0.0",
-  "description": "React Native app with Android widget showing random user avatars and names",
+  "description": "React Native app with MVVM architecture, API integration, and Android widget - Task 7",
   "main": "index.js",
   "scripts": {
     "android": "react-native run-android",
