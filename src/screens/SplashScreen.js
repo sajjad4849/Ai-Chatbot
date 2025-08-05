@@ -31,7 +31,7 @@ const SplashScreen = ({ onFinish }) => {
       }),
     ]).start();
 
-    // Auto-finish splash after 3 seconds
+    // Auto-finish splash after exactly 3 seconds as per task requirement
     const timer = setTimeout(() => {
       if (onFinish) {
         onFinish();
@@ -62,20 +62,20 @@ const SplashScreen = ({ onFinish }) => {
         </View>
 
         {/* App Name */}
-        <Text style={styles.appName}>UserWidget</Text>
-        <Text style={styles.appSubtitle}>Random User Display</Text>
+        <Text style={styles.appName}>User App</Text>
+        <Text style={styles.appSubtitle}>MVVM Architecture with Widgets</Text>
 
         {/* Loading Indicator */}
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#FFFFFF" />
-          <Text style={styles.loadingText}>Loading users...</Text>
+          <Text style={styles.loadingText}>Loading...</Text>
         </View>
       </Animated.View>
 
       {/* Bottom Info */}
       <View style={styles.bottomContainer}>
-        <Text style={styles.versionText}>Version 1.0.0</Text>
-        <Text style={styles.poweredText}>Powered by React Native</Text>
+        <Text style={styles.versionText}>Task 7 Implementation</Text>
+        <Text style={styles.poweredText}>React Native • SQLite • Widgets</Text>
       </View>
     </View>
   );

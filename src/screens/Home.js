@@ -14,7 +14,7 @@ import { useHomeViewModel } from '../viewmodels/HomeViewModel';
 import UserItem from '../components/UserItem';
 import UserWidget from '../widgets/UserWidget';
 import WidgetDataService from '../services/WidgetDataService';
-import TestWidget from '../utils/TestWidget';
+
 
 const Home = () => {
   const { users, loading, error, refreshing, refreshData } = useHomeViewModel();
@@ -32,15 +32,7 @@ const Home = () => {
     await WidgetDataService.updateWidgetData();
   };
 
-  const runWidgetTest = async () => {
-    console.log('🚀 Running Widget Test from Home Screen...');
-    await TestWidget.runFullTest();
-  };
 
-  const runQuickTest = async () => {
-    console.log('⚡ Running Quick Widget Test...');
-    await TestWidget.quickTest();
-  };
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
@@ -83,16 +75,6 @@ const Home = () => {
           <Text style={styles.headerSubtitle}>
             {users.length} user{users.length !== 1 ? 's' : ''} found
           </Text>
-          
-          {/* Debug Buttons */}
-          <View style={styles.debugButtons}>
-            <TouchableOpacity style={styles.debugButton} onPress={runQuickTest}>
-              <Text style={styles.debugButtonText}>Quick Test</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.debugButton} onPress={runWidgetTest}>
-              <Text style={styles.debugButtonText}>Full Test</Text>
-            </TouchableOpacity>
-          </View>
         </View>
 
         {/* Widget Section */}
@@ -142,22 +124,7 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 4,
   },
-  debugButtons: {
-    flexDirection: 'row',
-    marginTop: 12,
-    gap: 8,
-  },
-  debugButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-  },
-  debugButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
+
   usersSection: {
     marginTop: 16,
   },

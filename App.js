@@ -15,9 +15,8 @@ const App = () => {
   };
 
   if (showSplash) {
-    // Use AdvancedSplashScreen for better UX with real initialization
-    return <AdvancedSplashScreen onFinish={handleSplashFinish} />;
-    // Or use simple SplashScreen: return <SplashScreen onFinish={handleSplashFinish} />;
+    // Using simple 3-second splash as per task requirement
+    return <SplashScreen onFinish={handleSplashFinish} />;
   }
 
   return (

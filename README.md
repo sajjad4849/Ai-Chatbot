@@ -1,16 +1,25 @@
-# UserWidget App - React Native MVVM with Widgets
+# Task 7: Local DB, Web Services, MVVM & Widget
 
-A complete React Native application featuring MVVM architecture, SQLite database, API integration, and widget support with a professional splash screen.
+React Native app implementing MVVM architecture with API handling and widget functionality.
+
+## Task Requirements Implementation
+
+✅ **3-Second Splash Screen** - Professional animated splash screen  
+✅ **Main Screen (Home.js)** - Fetches and displays users from API  
+✅ **Local SQLite Database** - Stores user data locally  
+✅ **User List with FlatList** - Shows avatar and name for each user  
+✅ **Widget Implementation** - Displays random user from local DB  
+✅ **MVVM Architecture** - Clean separation of concerns  
 
 ## Features
 
-- ✨ **Professional Splash Screen** with real initialization progress
-- 🏗️ **MVVM Architecture** for clean code organization
-- 📱 **Widget Support** displaying random user data
-- 🔄 **SQLite Database** for local data storage
-- 🌐 **API Integration** with reqres.in
-- 🖼️ **Image Loading** with progress indicators
-- 🧪 **Built-in Testing** and debugging tools
+- 🕐 **3-Second Splash Screen** as per task requirement
+- 🏗️ **MVVM Architecture** (Models, Views, ViewModels, Services)
+- 📱 **Home Screen Widget** showing random user data
+- 🔄 **SQLite Database** for local data persistence
+- 🌐 **API Integration** with https://reqres.in/api/users
+- 🖼️ **Image Loading** with progress indicators for avatars
+- 📋 **FlatList** displaying user name and avatar
 
 ## Quick Start
 
@@ -18,13 +27,11 @@ A complete React Native application featuring MVVM architecture, SQLite database
 2. iOS setup: `cd ios && pod install && cd ..`
 3. Run the app: `npx react-native run-ios` or `npx react-native run-android`
 
-## Splash Screen Options
+## App Flow
 
-The app includes two splash screen options:
+1. **Splash Screen** (3 seconds) → **Home Screen**
+2. **Home Screen** displays user list with avatars and names
+3. **Widget** shows random user from local database
+4. **Pull to refresh** updates data from API
 
-1. **AdvancedSplashScreen** (default): Shows real app initialization progress
-2. **SplashScreen**: Simple animated splash screen
-
-To switch between them, edit `App.js` and change the import/component usage.
-
-See `SETUP_INSTRUCTIONS.md` for detailed setup and troubleshooting information.
+See `SETUP_INSTRUCTIONS.md` for detailed information.
